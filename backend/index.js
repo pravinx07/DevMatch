@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors")
 const env = require("dotenv")
 const http = require("http")
+const {initSocketIo } = require("./src/utils/socketIo");
 
 const app = express();
 app.use(cookieParser()); // use for read a cookie
@@ -23,8 +24,6 @@ const authRouter = require('./src/routes/auth')
 const profileRouter = require("./src/routes/profile")
 const requestRouter = require("./src/routes/request");
 const { userRouter } = require("./src/routes/user");
-const { Socket } = require("dgram");
-const { default: initSocketIo } = require("./src/utils/socketIo");
 
 app.use("/",authRouter)  // check the all routes in authROuter
 app.use("/",profileRouter)

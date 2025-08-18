@@ -6,8 +6,26 @@ const initSocketIo = (server) => {
       origin: "http://localhost:5173",
     },
   });
-  io.on("connection", {server})
-  
-};
+   io.on("connection", (socket) => {
+    console.log("A user connected:", socket.id);
 
-export default initSocketIo;
+    // Example: listen for a message
+    socket.on("join", (data) => {
+      console.log("Message from client:", data);
+
+      // broadcast back to all clients
+      io.emit("message", data);
+    });
+
+    // handle disconnection
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", socket.id);
+    });
+  });
+
+  return io;
+};
+  
+
+
+module.exports = {initSocketIo}
