@@ -17,7 +17,10 @@ export const SignUp = () => {
     e.preventDefault()
 
     try {
-      const res = await axios.post("http://localhost:7777/signup",{
+      const API = "https://devmatch-57k2.onrender.com";
+      console.log(API);
+      
+      const res = await axios.post(`${API}/signup`,{
         firstName,
         lastName,
         emailId,

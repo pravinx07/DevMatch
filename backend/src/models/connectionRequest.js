@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const connectionRequestSchema = new mongoose.Schema({
     fromUserId:{
@@ -34,5 +34,4 @@ connectionRequestSchema.pre("save",function(next){
     next();
 })
 
-const ConnectionRequestModel = mongoose.model("ConnectionRequestModel",connectionRequestSchema)
-module.exports = ConnectionRequestModel
+export const ConnectionRequestModel = mongoose.model("ConnectionRequestModel",connectionRequestSchema)

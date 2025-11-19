@@ -17,7 +17,8 @@ export const Body = () => {
     const fetchUser = async() => {
 
       try {
-        const res = await axios.get("http://localhost:7777/profile/view",
+        const API = import.meta.env.VITE_API_URL;
+        const res = await axios.get(`${API}/profile/view`,
             {
                 withCredentials:true
             }
@@ -28,7 +29,7 @@ export const Body = () => {
       } catch (err) {
         if (err.response && err.response.status === 401) {
           // Optionally clear state, show a message, etc.
-        //   navigate("/login");
+          navigate("/login");
         } else {
           // Handle other errors
           console.error(err);

@@ -1,9 +1,9 @@
-const express = require("express");
-const User = require("../models/user")
-const jwt = require("jsonwebtoken");
+import express from "express";
+import {User} from "../models/user.js";
 
-const bcrypt = require("bcrypt");
-const { validateSignUpData } = require("../utils/validation");
+import bcrypt from "bcrypt"
+
+import { validateSignUpData } from "../utils/validation.js";
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
@@ -32,10 +32,12 @@ authRouter.post("/signup", async (req, res) => {
       // add the token to cookie and send the response back to the user
 
     res.cookie("token", token);
+    console.log(firstName, lastName, emailId, password  );
+    
 
     return res.status(201).json({message:"User created Successfully", savedUser});
   } catch (error) {
-   return res.status(500).send("ERROR : " + error.message);
+   return res.status(500).send("ERROR : error while signup " + error.message);
   }
 });
 
@@ -76,4 +78,4 @@ authRouter.post("/logout",async(req,res)=>{
    res.send("User Logout successfull!!")
 })
 
-module.exports = authRouter;
+export default authRouter;

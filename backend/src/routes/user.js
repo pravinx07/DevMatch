@@ -1,7 +1,8 @@
-const express = require("express");
-const { userAuth } = require("../middlewares/auth");
-const ConnectionRequestModel = require("../models/connectionRequest");
-const User = require("../models/user");
+import express from "express"
+import {userAuth} from "../middlewares/auth.js"
+
+import { ConnectionRequestModel } from "../models/connectionRequest.js";
+import {User} from "../models/user.js"
 
 const userRouter = express.Router();
 
@@ -94,6 +95,4 @@ userRouter.get("/feed", userAuth, async (req, res) => {
   }
 });
 
-module.exports = {
-  userRouter,
-};
+export default userRouter;

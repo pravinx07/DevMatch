@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 const userSchema = mongoose.Schema(
   {
@@ -12,20 +11,18 @@ const userSchema = mongoose.Schema(
     lastName: {
       type: String,
     },
-    emailId: {
+    email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      validator(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Invalid email address:" + value);
-        }
-      },
+      
+      
     },
     password: {
       type: String,
       required: true,
+      minlength:6
     },
     age: {
       type: Number,
@@ -34,16 +31,11 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      validate(value) {
-        // only validate for new user not existing user
-        if (!["Male", "Female", "Others"].includes(value)) {
-          throw new Error();
-        }
-      },
+     
     },
-    photoUrl: {
+    avatar: {
       type: String,
-      default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReNr2tV6uuvmORZKBUeu2Oxf9iH-wdYouxVw&s"
+      required:true
     },
 
     about: {
@@ -58,22 +50,42 @@ const userSchema = mongoose.Schema(
 );
 
 userSchema.index({firstName:1, lastName:1})  // indexes is db for fast manipulating data
-userSchema.methods.getJWT = async function () {
-  const user = this; //  refer that perticuler instance and work with only old function not arrow function
-  const token = await jwt.sign({ _id: user._id }, "DEV@Tinder123", {
-    expiresIn: "1d",
-  });
 
-  return token;
-};
 
-userSchema.methods.validatePassword = async function(passwordInputByUser){
-  const user = this;
-  const passwordHash = user.password
+userSchema.pre("save",async function(next){
+  if(!this.isModified("password")) return next();
+  
+  this.password = await bcrypt.hash(this.password, 10);
+  next()
+})
 
-  const isPasswordValid = await bcrypt.compare(passwordInputByUser , passwordHash);
-  return isPasswordValid
+userSchema.methods.isPasswordCorrect = async function(password){
+  return await bcrypt.compare(password, this.password)
 }
-const userModel = mongoose.model("User", userSchema);
 
-module.exports = userModel;
+userSchema.methods.generateAccessToken = function(){
+  return jwt.sign({
+    _id:this._id,
+    email:this.email,
+    firstName:this.firstName,
+    lastName:this.lastName
+  }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+  })
+}
+
+userSchema.methods.generateRefreshToken = function(){
+  return jwt.sign(
+    {
+    _id:this._id,
+  
+   }
+   ,
+    process.env.REFRESH_TOKEN_SECRET,
+  {
+    expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+  }
+)
+}
+export const User = mongoose.model("User", userSchema);
+

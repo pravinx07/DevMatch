@@ -11,8 +11,9 @@ export const Requests = () => {
   const dispatch = useDispatch();
   const fetchRequests = async () => {
     try {
+      const API = import.meta.env.VITE_API_URL;
       const res = await axios.get(
-        "http://localhost:7777/user/request/recieved",
+        `${API}/user/request/recieved`,
         { withCredentials: true }
       );
       dispatch(getConnections(res?.data?.data));

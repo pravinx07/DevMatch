@@ -15,8 +15,9 @@ export const FeedCard = ({ user }) => {
 
   const handleRequest = async (status, _id) => {
     try {
+      const API = import.meta.env.VITE_API_URL;
       const res = await axios.post(
-        `http://localhost:7777/request/send/${status}/${_id}`,
+        `${API}/request/send/${status}/${_id}`,
         {},
         { withCredentials: true }
       );

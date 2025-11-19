@@ -9,9 +9,12 @@ export const Connections = () => {
     const connections = useSelector(store => store.connections)
   const dispatch = useDispatch();
   const fetchConnections = async () => {
+
+
     try {
+      const API = import.meta.env.VITE_API_URL;
       const res = await axios.get(
-        "http://localhost:7777/user/connections",
+        `${API}/user/connections`,
         { withCredentials: true }
       );
       dispatch(getConnections(res?.data?.data));

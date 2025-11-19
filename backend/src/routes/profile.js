@@ -1,7 +1,7 @@
-const express = require("express");
-const { userAuth } = require("../middlewares/auth");
-const { validateEditProfileData } = require("../utils/validation");
+import express from "express";
 
+import {userAuth} from "../middlewares/auth.js";
+import {validateEditProfileData} from "../utils/validation.js";
 const profileRouter = express.Router();
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
@@ -32,4 +32,5 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     return res.status(400).send("ERROR : " + error.message);
   }
 });
-module.exports = profileRouter;
+
+export default profileRouter;

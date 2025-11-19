@@ -27,8 +27,9 @@ export const EditProfile = ({ user }) => {
 
   const handleUpdate = async () => {
     try {
+      const API = import.meta.env.VITE_API_URL;
       const res = await axios.patch(
-        "http://localhost:7777/profile/edit",
+        `${API}/profile/edit`,
         {
           firstName,
           lastName,

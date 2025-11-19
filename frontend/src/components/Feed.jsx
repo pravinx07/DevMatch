@@ -13,7 +13,8 @@ export const Feed = () => {
     if (feed && feed.length > 0) return;
 
     try {
-      const res = await axios.get("http://localhost:7777/feed", {
+      const API = import.meta.env.VITE_API_URL;
+      const res = await axios.get(`${API}/feed`, {
         withCredentials: true,
       });
       dispatch(addFeed(res?.data?.data));

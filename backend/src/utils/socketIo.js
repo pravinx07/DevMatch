@@ -1,31 +1,44 @@
-const socket = require("socket.io");
+import {Server} from "socket.io"
 
-const initSocketIo = (server) => {
-  const io = socket(server, {
+export const initSocketIo = (server) => {
+  const io = new Server(server, {
     cors: {
       origin: "http://localhost:5173",
+      methods: ["GET", "POST"],
     },
   });
-   io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
 
-    // Example: listen for a message
-    socket.on("join", (data) => {
-      console.log("Message from client:", data);
+  io.on("connection", (socket) => {
+    console.log("✅ A user connected:", socket.id);
 
-      // broadcast back to all clients
-      io.emit("message", data);
+    // User joins private room
+    socket.on("join", (userID, toUserId) => {
+      const roomId = [userID, toUserId].sort().join("_");
+      socket.join(roomId);
+
+      console.log(` User ${userID} joined private room ${roomId}`);
+      io.to(roomId).emit("message", `User ${userID} joined the chat`);
     });
 
-    // handle disconnection
+    // Handle private messages
+    socket.on("privateMessage", (from, to, message) => {
+      const roomId = [from, to].sort().join("_");
+      io.to(roomId).emit("privateMessage", { from, message });
+      console.log(` ${from} → ${to}: ${message}`);
+    });
+
+    // Handle typing indicator
+    socket.on("typing", (from, to, isTyping) => {
+      const roomId = [from, to].sort().join("_");
+      socket.to(roomId).emit("typing", { from, isTyping });
+      console.log(`✍️ ${from} is ${isTyping ? "typing..." : "stopped typing"}`);
+    });
+
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
+      console.log("❌ User disconnected:", socket.id);
     });
   });
 
   return io;
 };
-  
 
-
-module.exports = {initSocketIo}

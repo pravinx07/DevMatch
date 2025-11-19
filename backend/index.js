@@ -1,11 +1,13 @@
-const express = require("express");
 // const connectDB = require("../config/database");
-const connectDB = require("./src/config/database")
-const cookieParser = require("cookie-parser");
-const cors = require("cors")
-const env = require("dotenv")
-const http = require("http")
-const {initSocketIo } = require("./src/utils/socketIo");
+import express from "express"
+
+import { connectDB } from "./src/config/database.js";
+import cookieParser from "cookie-parser";
+import cors from "cors"
+import dotenv from "dotenv"
+import http from "http"
+import { initSocketIo } from "./src/utils/socketIo.js";
+
 
 const app = express();
 app.use(cookieParser()); // use for read a cookie
@@ -14,16 +16,19 @@ app.use(cors({
   origin:"http://localhost:5173",
   credentials:true
 }))
-env.config()
+dotenv.config({
+  path:"./.env"
+})
+
 
 const server = http.createServer(app);
 initSocketIo(server);
 
 
-const authRouter = require('./src/routes/auth')
-const profileRouter = require("./src/routes/profile")
-const requestRouter = require("./src/routes/request");
-const { userRouter } = require("./src/routes/user");
+import authRouter from "./src/routes/auth.js";
+import profileRouter from "./src/routes/profile.js";
+import requestRouter from "./src/routes/request.js";
+import userRouter from "./src/routes/user.js";
 
 app.use("/",authRouter)  // check the all routes in authROuter
 app.use("/",profileRouter)
