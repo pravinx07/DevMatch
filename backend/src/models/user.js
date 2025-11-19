@@ -4,11 +4,11 @@ import bcrypt from "bcrypt"
 
 const userSchema = mongoose.Schema(
   {
-    firstName: {
+    firstname: {
       type: String,
       required: true,
     },
-    lastName: {
+    lastname: {
       type: String,
     },
     email: {
@@ -45,6 +45,9 @@ const userSchema = mongoose.Schema(
     skills: {
       type: [String],
     },
+    refresToken:{
+      type:String,
+    }
   },
   { timestamps: true }
 );
@@ -67,8 +70,8 @@ userSchema.methods.generateAccessToken = function(){
   return jwt.sign({
     _id:this._id,
     email:this.email,
-    firstName:this.firstName,
-    lastName:this.lastName
+    firstname:this.firstname,
+    lastname:this.lastname
   }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn:process.env.ACCESS_TOKEN_EXPIRY
   })

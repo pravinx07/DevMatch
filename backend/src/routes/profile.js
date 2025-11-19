@@ -1,6 +1,6 @@
 import express from "express";
 
-import {userAuth} from "../middlewares/auth.js";
+import {userAuth} from "../middlewares/auth.middlewarejs";
 import {validateEditProfileData} from "../utils/validation.js";
 const profileRouter = express.Router();
 
