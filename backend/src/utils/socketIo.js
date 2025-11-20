@@ -9,7 +9,7 @@ export const initSocketIo = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("✅ A user connected:", socket.id);
+    console.log(" A user connected:", socket.id);
 
     // User joins private room
     socket.on("join", (userID, toUserId) => {
@@ -31,11 +31,11 @@ export const initSocketIo = (server) => {
     socket.on("typing", (from, to, isTyping) => {
       const roomId = [from, to].sort().join("_");
       socket.to(roomId).emit("typing", { from, isTyping });
-      console.log(`✍️ ${from} is ${isTyping ? "typing..." : "stopped typing"}`);
+      console.log(`${from} is ${isTyping ? "typing..." : "stopped typing"}`);
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ User disconnected:", socket.id);
+      console.log(" User disconnected:", socket.id);
     });
   });
 
