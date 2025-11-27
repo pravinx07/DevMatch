@@ -18,8 +18,12 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 import userRouter from "./routes/user.routes.js";
+import requestRouter from "./routes/request.routes.js";
+import feedRouter from "./routes/feed.routes.js" 
 
 app.use("/api/v1/user",userRouter)
+app.use("/api/v1/user",requestRouter)
+app.use("/api/v1/user", feedRouter)
 
 
 export default app

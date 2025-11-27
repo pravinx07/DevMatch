@@ -4,6 +4,7 @@ import { User } from "../models/user.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 import path from "path"
+import { ConnectionRequestModel } from "../models/connectionRequest.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -25,79 +26,6 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
-// export const registerUser = asyncHandler(async (req, res) => {
-//   const { firstname, lastname, email, password, age, gender, about, skills } =
-//     req.body;
-  
-//   if (
-//     [firstname, lastname, email, password].some((field) => field?.trim() == "")
-//   ) {
-//     throw new ApiError(400, "All fields must be requried");
-//   }
-
-//   const existingUser = await User.findOne({
-//     $or: [{ firstname }, { email }],
-//   });
-
-//   if (existingUser) {
-//     throw new ApiError(409, "User with email or username already exists");
-//   }
-
-//   // const avatarLocalPath = req.files?.avatar[0]?.path;
-//   // console.log(
-//   //   "Errrrorr in register controller avatar Local file",
-//   //   avatarLocalPath
-//   // );
-
-//   // if (!avatarLocalPath) {
-//   //   throw new ApiError(400, "Avatar file is required");
-//   // }
-
-//   // const avatar = await uploadOnCloudinary(avatarLocalPath);
-
-//   const avatarLocalPath = req.files?.avatar?.[0]?.path
-//   // console.log("BODY:", req.body);
-//   // console.log("FILES:", req.files.avatar[0]?.path);
-//   // console.log("FILES:", req.files.path);
-//   // console.log("FILE (single) path :", req.file);
-
-// console.log("req.files =", req.files);
-// console.log("req.file =", req.file);
-// console.log("Avatar local file",avatarLocalPath);
-
-// if (!avatarLocalPath) {
-//   throw new ApiError(400, "Avatar file is required");
-// }
-
-// // Convert to absolute path for Cloudinary
-// const absoluteAvatarPath = path.resolve(avatarLocalPath);
-
-// const avatar = await uploadOnCloudinary(absoluteAvatarPath);
-//   if (!avatar) {
-//     throw new ApiError(400, "Avatar file required");
-//   }
-
-//   const user = await User.create({
-//     firstname: firstname.toLowerCase(),
-//     lastname,
-//     avatar: avatar.url,
-//     email,
-//     password,
-//   });
-
-//   const createdUser = await User.findById(user._id).select(
-//     "-password -refreshToken"
-//   );
-
-//   if (!createdUser) {
-//     throw new ApiError(400, "something went wrong while creating user");
-//   }
-
-//   return res
-//     .status(201)
-//     .json(new ApiResponse(200, createdUser, "User created successfully"));
-// });
-
 export const registerUser = asyncHandler(async (req, res) => {
   const { firstname, lastname, email, password, age, gender, about, skills } =
     req.body;
@@ -114,12 +42,9 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-  console.log("req.files =", req.files);
 
-  // ✔ Your final correct multer path
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
 
-  console.log("Avatar path:", avatarLocalPath);
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
@@ -254,6 +179,7 @@ export const currentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, req.user, "current user fetched successfully"));
 });
 
+
 export const updateAccountDetails = asyncHandler(async (req, res) => {
   const { firstname, lastname, email, age, gender, about, skills } = req.body;
 
@@ -282,13 +208,14 @@ export const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 export const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.files?.path;
+  const avatarLocalPath = req.files.avatar[0].path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is missing");
   }
+  const absoluteAvatarPath = path.resolve(avatarLocalPath);
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
+  const avatar = await uploadOnCloudinary(absoluteAvatarPath);
 
   if (!avatar.url) {
     throw new ApiError(400, "Error while uploading an avatar");
@@ -307,3 +234,37 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
 });
+
+
+export const getProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.send(user);
+  } catch (error) {
+    res.status(400).send("Error in token  : " + error.message);
+  }
+});
+
+
+export const userConnection = asyncHandler(async(req,res) =>{
+  const loggedInUserId = req.user._id;
+
+  const connections = await ConnectionRequestModel.find({
+    $or:[
+      {toUserId:loggedInUserId, status:"accepted"},
+      {fromUserId:loggedInUserId, status:"accepted"}
+    ]
+  }).populate("fromUserId", "firstname lastname age gender avatar about email").populate("toUserId", "firstname lastname age gender avatar about email");
+
+  const finalConnections = connections.map((row) => {
+    if(row.fromUserId._id.toString() === loggedInUserId.toString()){
+      return row.toUserId
+    }
+    return row.fromUserId;
+  })
+
+  return res.status(200).json(new ApiResponse(200, finalConnections, "connections fetched successfully"))
+
+
+})

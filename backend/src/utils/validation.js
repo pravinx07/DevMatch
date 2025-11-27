@@ -29,4 +29,3 @@ export const validateEditProfileData = (req) => {
   );
   return isAllowed;
 };
-

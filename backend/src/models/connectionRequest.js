@@ -25,6 +25,7 @@ const connectionRequestSchema = new mongoose.Schema({
     timestamps:true,
 })
 connectionRequestSchema.index({fromUserId:1,toUserId:1})  // compound index it is for searching fast in db 
+
 connectionRequestSchema.pre("save",function(next){
     const connectionReq = this;
     // check if the froUserId is same as toUserId

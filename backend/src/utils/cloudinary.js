@@ -14,7 +14,8 @@ cloudinary.config({
 //         if(!localfilePath) return null;
 
 //         const response = await cloudinary.uploader.upload(localfilePath,{
-//             resource_type:"auto"
+//             resource_type:"auto",
+//             folder:"avatars"
 //         })
 //         console.log("Avatar file is in cloudinary middleware");
         
