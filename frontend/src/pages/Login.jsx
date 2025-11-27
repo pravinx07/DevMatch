@@ -7,103 +7,88 @@ const Login = () => {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.auth);
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ email: "", password: "" });
 
-  // if already logged in → redirect to feed
-  if (user) {
-    return <Navigate to="/feed" replace />;
-  }
+  if (user) return <Navigate to="/feed" replace />;
 
   const handleChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) return;
     dispatch(loginUser(form));
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden flex flex-col md:flex-row">
-        {/* Left side - text / branding (hidden on very small) */}
-        <div className="hidden md:flex md:w-1/2 bg-blue-600 text-white flex-col justify-center p-8">
-          <h1 className="text-3xl font-bold mb-4">Welcome to DevMatch</h1>
-          <p className="text-sm text-blue-100">
-            Connect with other developers, share your skills, and find the right
-            people to build amazing projects with.
+      <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row">
+        
+        {/* LEFT PANEL */}
+        <div className="hidden md:flex md:w-1/2 bg-blue-600 text-white flex-col justify-center p-10">
+          <h1 className="text-3xl font-bold mb-4">Welcome Back!</h1>
+          <p className="text-blue-100 text-sm">
+            Login to continue exploring developers on DevMatch.
           </p>
         </div>
 
-        {/* Right side - form */}
-        <div className="w-full md:w-1/2 p-8">
-          <h2 className="text-2xl font-semibold mb-2 text-center">
-            Login to your account
+        {/* RIGHT PANEL */}
+        <div className="w-full md:w-1/2 p-8 bg-white">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-1">
+            Login
           </h2>
-          <p className="text-sm text-gray-500 mb-6 text-center">
-            Enter your email and password to continue.
+          <p className="text-gray-600 text-sm text-center mb-6">
+            Enter your email and password to continue
           </p>
 
+          {/* ERROR MESSAGE */}
           {error && (
-            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded">
+            <div className="mb-4 text-sm text-red-700 bg-red-100 border border-red-300 px-3 py-2 rounded">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="email">
+              <label className="block text-gray-800 text-sm font-medium mb-1">
                 Email
               </label>
               <input
-                id="email"
-                name="email"
                 type="email"
+                name="email"
                 required
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="you@example.com"
+                className="w-full bg-white border border-gray-300 text-gray-900 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label
-                className="block text-sm font-medium mb-1"
-                htmlFor="password"
-              >
+              <label className="block text-gray-800 text-sm font-medium mb-1">
                 Password
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
+                name="password"
                 required
                 value={form.password}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="••••••••"
+                className="w-full bg-white border border-gray-300 text-gray-900 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2.5 rounded-md text-sm font-medium hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white py-2.5 rounded-md text-sm font-medium hover:bg-blue-700 transition disabled:opacity-60"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
-          <p className="mt-4 text-xs text-gray-500 text-center">
-            Don&apos;t have an account?{" "}
+          <p className="mt-4 text-gray-700 text-xs text-center">
+            Don't have an account?{" "}
             <Link to="/register" className="text-blue-600 hover:underline">
               Register
             </Link>
