@@ -7,9 +7,11 @@ const userSchema = mongoose.Schema(
     firstname: {
       type: String,
       required: true,
+      trim:true
     },
     lastname: {
       type: String,
+      trim:true
     },
     email: {
       type: String,
@@ -22,7 +24,8 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength:6
+      minlength:6,
+      trim:true
     },
     age: {
       type: Number,
@@ -43,7 +46,7 @@ const userSchema = mongoose.Schema(
       default: "This is default about ",
     },
     skills: {
-      type: [String],
+      type:String,
     },
     refresToken:{
       type:String,

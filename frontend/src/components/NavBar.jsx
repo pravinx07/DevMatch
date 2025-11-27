@@ -1,82 +1,64 @@
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { removeUser } from "../../utils/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
-export const NavBar = () => {
-  const user = useSelector((store) => store.user);
+const Navbar = () => {
+  const { user, token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogOut = async () => {
-    try {
-      const API = import.meta.env.VITE_API_URL;
-      await axios.post(
-        `${API}/logout`,
-        {},
-        { withCredentials: true }
-      );
-      dispatch(removeUser());
-      navigate("/login");
-    } catch (error) {
-      console.error("Error while logout", error);
-    }
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
   };
-  return (
-    <div className="navbar bg-base-300 shadow-sm">
-      <div className="flex-1">
-        <Link
-          to={"/feed"}
-          className="btn btn-ghost text-xl hover:bg-gray-800 transition duration-150 ease-in-out "
-        >
-          💻 DevMatch
-        </Link>
-      </div>
-      {user && user.firstName && (
-        <div className="flex gap-2">
-          <span className="p-2 pr-0 text-lg font-semibold  text-white">
-            Welcome! {user.firstName}
-          </span>
 
-          <div className="dropdown dropdown-end mx-5">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar"
+  return (
+    <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm z-20">
+      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to={token ? "/feed" : "/login"} className="text-xl font-bold">
+          DevMatch
+        </Link>
+
+        {token ? (
+          <div className="flex items-center gap-4">
+            <Link to="/feed" className="text-sm hover:underline">
+              Feed
+            </Link>
+            <Link to="/connections" className="text-sm hover:underline">
+              Connections
+            </Link>
+            <Link to="/requests" className="text-sm hover:underline">
+              Requests
+            </Link>
+            <Link to="/profile" className="text-sm hover:underline">
+              Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-500 text-white px-3 py-1 rounded"
             >
-              <div className="w-10 rounded-full ">
-                <img
-                  alt="Tailwind CSS Navbar component"
-                  src={
-                    user.photoUrl ||
-                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                  }
-                />
-              </div>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                <Link to={"/profile"} className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/connections">Connections</Link>
-              </li>
-               <li>
-                <Link to="/requests">Requests</Link>
-              </li>
-              <li>
-                <button onClick={handleLogOut} className="btn btn-link p-0 m-0 text-left">Logout</button>
-              </li>
-            </ul>
+              Logout
+            </button>
           </div>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="flex gap-3">
+            <Link
+              to="/login"
+              className="text-sm px-3 py-1 border rounded hover:bg-gray-100"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="text-sm px-3 py-1 bg-blue-600 text-white rounded"
+            >
+              Register
+            </Link>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
+
+export default Navbar;

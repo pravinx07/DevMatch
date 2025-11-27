@@ -1,37 +1,70 @@
-import { BrowserRouter, Routes, Route } from "react-router";
-import './App.css'
-import { Body } from "./components/Body";
-import { SignIn } from "./components/SignIn";
-import { SignUp } from "./components/SignUp";
-import {Provider} from "react-redux"
-import { appStore } from "../utils/appStore";
-import { Profile } from "./components/Profile";
-import { Feed } from "./components/Feed";
-import { Connections } from "./components/Connections";
-import {Requests} from "./components/Requests"
-import Chat from "./components/Chat";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Feed from "./pages/Feed";
+import Connections from "./pages/Connections";
+import Requests from "./pages/Requests";
+import Profile from "./pages/Profile";
+import Navbar from "./components/NavBar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-
   return (
-    <Provider store={appStore}>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <div className="max-w-5xl mx-auto pt-20 px-4 pb-10">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-   <BrowserRouter>
-   <Routes>
-    <Route path="/" element={<Body/>}>
-       <Route path="/feed" element={<Feed/>}/>
-      <Route path="/signup" element={<SignUp/>}/>
-      <Route path="/login" element={<SignIn/>}/>
-      <Route path="/profile" element={<Profile/>}/>
-      <Route path="/requests" element={<Requests/>}/>
-      <Route path="/connections" element={<Connections/>}/>
-      <Route path="/chat/:toUserId" element={<Chat/>}/>
-    </Route>
-   
-   </Routes>
-   </BrowserRouter>
-    </Provider>
-  )
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Feed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feed"
+              element={
+                <ProtectedRoute>
+                  <Feed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/connections"
+              element={
+                <ProtectedRoute>
+                  <Connections />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/requests"
+              element={
+                <ProtectedRoute>
+                  <Requests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
