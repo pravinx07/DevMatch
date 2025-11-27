@@ -46,7 +46,7 @@ const userSchema = mongoose.Schema(
       default: "This is default about ",
     },
     skills: {
-      type:String,
+      type:[String],
     },
     refresToken:{
       type:String,
